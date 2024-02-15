@@ -1,11 +1,4 @@
-<h1 align="center">New React App (TOTALLY STOLEN FROM cra-template-complete-web-app by Cristiano Raimondi @chrisuser)</h1>
-
-<br />
-
-This is a blank README file that you can customize at your needs.\
-Describe your project, how it works and how to contribute to it.
-
-<br />
+<h1 align="center">Orel Buy Web App</h1>
 
 # 🚀 Available Scripts
 
@@ -146,13 +139,3 @@ This is the structure of the files in the project:
     ├── README.md
     └── tsconfig.json
 ```
-
-# 📖 Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-#
-
-<p align="center">Bootstrapped with Create React App.</p>
