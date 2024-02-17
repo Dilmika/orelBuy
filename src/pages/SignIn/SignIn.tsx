@@ -1,6 +1,5 @@
-import React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import React, { useState } from 'react';
+import LoadingButton from '@mui/lab/LoadingButton';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -8,29 +7,28 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup'
 import { useFormik } from 'formik';
+import { isUserAuthenticated, userProfileAction } from '../../store/reducers/authSlice';
+import { useDispatch } from 'react-redux';
+import { ROUTES } from '../../resources/routes-constants';
+import { userApi, userApiProfile } from '../../utility/api';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const defaultTheme = createTheme();
 
 const SignIn: React.FC = () => {
 
-    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const [signInLoading, setSignInLoading] = useState(false);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-		console.log("LOG: handleSubmit -> data", data)
-        console.log({
-          email: data.get('email'),
-          password: data.get('password'),
-        });
-      };
+    const navigate = useNavigate()
 
       const validationSchema = yup.object().shape({
         email: yup.string().email('Invalid email address').required('Email is required'),
@@ -43,13 +41,42 @@ const SignIn: React.FC = () => {
               password: '',
             },
             validationSchema: validationSchema,
-            onSubmit: (values : any) => {
-                //   alert(JSON.stringify(values, null, 2));
-                console.log("LOG: SignIn:React.FC -> JSON.stringify(values, null, 2)", JSON.stringify(values, null, 2))
+            onSubmit: async (values : {email : string, password: string}) => {
+
+              try {
+
+                setSignInLoading(true)
+
+                const {status, data} = await userApi.post('/login', {
+                  email: values?.email, password: values?.password
+                })
+
+                if(status === 201){
+
+                  localStorage.setItem('accessToken', data.access_token);
+                  localStorage.setItem('refreshToken', data.refresh_token);
+                  
+                  const userData = await userApiProfile.get('/profile');
+
+                  dispatch(isUserAuthenticated(true))
+                  dispatch(userProfileAction({
+                    avatar : userData?.data?.avatar,
+                    email : userData?.data?.email,
+                    role : userData?.data?.role,
+                    name : userData?.data?.name,
+                  }))
+                  setSignInLoading(false)
+                  navigate(ROUTES.HOMEPAGE_ROUTE)
+              }
+              } catch (error) {
+                toast.error("Incorrect Login Credentials")
+                setSignInLoading(false)
+              }
             },
         });
         
     return (
+      <div>
         <ThemeProvider theme={defaultTheme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -61,11 +88,11 @@ const SignIn: React.FC = () => {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              {/* <LockOutlinedIcon /> */}
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
+            <Typography component="h1" variant="h3" color={"red"}>
+              OrelBuy
+            </Typography>
+            <Typography component="h1" variant="h6">
+              Hello,Welcome to OrelBuy
             </Typography>
             <Box component="form" sx={{ mt: 1 }} onSubmit={formik.handleSubmit}>
               <TextField
@@ -99,14 +126,15 @@ const SignIn: React.FC = () => {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <Button
+              <LoadingButton
                 type="submit"
                 fullWidth
-                variant="contained"
+                variant="outlined"
                 sx={{ mt: 3, mb: 2 }}
+                loading={signInLoading}
               >
                 Sign In
-              </Button>
+              </LoadingButton>
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
@@ -124,6 +152,7 @@ const SignIn: React.FC = () => {
           {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
         </Container>
       </ThemeProvider>
+      </div>
     );
 }
 

@@ -9,7 +9,9 @@ const initialState: DataReducer = {
     contents: []
 }
 
-const dataReducer = createReducer<DataReducer>(initialState, (builder) => {
+const dataReducer = createReducer<DataReducer>(
+    initialState, 
+    (builder) => {
     builder.addCase(setContents, (state, action) => {
         state.contents = action.payload
     })
