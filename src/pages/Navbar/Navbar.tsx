@@ -12,8 +12,8 @@ import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
-import { useDispatch } from 'react-redux'
-import { resetAuthStateAction } from '../../store/reducers/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { authSelector, resetAuthStateAction } from '../../store/reducers/authSlice'
 import { useNavigate } from 'react-router-dom'
 
 const pages = ['Products', 'Pricing', 'Flash Deals', 'Merchants']
@@ -21,6 +21,7 @@ const pages = ['Products', 'Pricing', 'Flash Deals', 'Merchants']
 function Navbar() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { userProfile } = useSelector(authSelector);
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
@@ -132,12 +133,16 @@ function Navbar() {
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, display: "flex" }}>
+                      <Button sx={{ my: 2, color: 'white', display: { xs: 'none', md: 'block' } }}>
+                      {userProfile?.name}
+                            </Button>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt="Remy Sharp" src={userProfile?.avatar} />
                             </IconButton>
                         </Tooltip>
+
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"

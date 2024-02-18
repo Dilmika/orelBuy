@@ -24,7 +24,6 @@ const refreshToken = async () => {
   
       return newAccessToken;
     } catch (error) {
-      // Handle refresh token failure (e.g., logout user, redirect to login page)
       throw error;
     }
   };
@@ -62,12 +61,10 @@ const refreshToken = async () => {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return productApi(originalRequest);
         } catch (refreshError) {
-          // Handle refresh token failure (e.g., logout user, redirect to login page)
           throw refreshError;
         }
       }
   
-      // Forward any other errors
       throw error;
     }
   );
