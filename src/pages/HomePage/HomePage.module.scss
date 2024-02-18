@@ -3,17 +3,24 @@
 .component {
     height: 100%;
     width: 100%;
+    margin: 10px;
 
-    @include breakpoint(">desktop") {
-        background: white;
-    }
-    @include breakpoint("<desktop") {
-        background: green;
-    }
-    @include breakpoint("<tablet") {
-        background: blue;
-    }
-    @include breakpoint("<phone") {
-        background: red;
-    }
+    // @include breakpoint(">desktop") {
+    //     background: white;
+    // }
+    // @include breakpoint("<desktop") {
+    //     background: green;
+    // }
+    // @include breakpoint("<tablet") {
+    //     background: blue;
+    // }
+    // @include breakpoint("<phone") {
+    //     background: red;
+    // }
+}
+
+.itemWrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
