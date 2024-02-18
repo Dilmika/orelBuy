@@ -2,16 +2,21 @@ import React from 'react'
 import style from './HomePage.module.scss'
 import { authSelector } from '../../store/reducers/authSlice'
 import { useSelector } from 'react-redux'
+import Item from '../../components/Item'
+import { Box, Container, Grid } from '@mui/material'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import ItemList from '../../components/ItemList'
 
 const HomePage: React.FC = () => {
 
     const { userProfile } = useSelector(authSelector);
-	console.log("LOG: HomePage:React.FC -> userProfile", userProfile)
 
     return (
+        <Container maxWidth="xl">
         <div className={style.component}>
-            <h1>Hello world!</h1>
+            <ItemList/>
         </div>
+        </Container>
     )
 }
 
