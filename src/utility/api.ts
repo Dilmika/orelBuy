@@ -1,5 +1,8 @@
 /* eslint-disable no-useless-catch */
 import axios, { AxiosInstance } from "axios";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { resetAuthStateAction } from "../store/reducers/authSlice";
 
 const productApi: AxiosInstance = axios.create({
     baseURL: process.env.REACT_APP_BE_URL_PRODUCTS,
@@ -14,6 +17,7 @@ const userApiProfile:  AxiosInstance = axios.create({
 })
 
 const refreshToken = async () => {
+
     try {
       const response = await userApi.post('/refresh-token', {
         refreshToken: localStorage.getItem('refreshToken'),
@@ -24,7 +28,7 @@ const refreshToken = async () => {
   
       return newAccessToken;
     } catch (error) {
-      throw error;
+		throw error;
     }
   };
 
@@ -51,6 +55,10 @@ const refreshToken = async () => {
   productApi.interceptors.response.use(
     (response) => response,
     async (error) => {
+
+      const dispatch = useDispatch()
+      const navigate = useNavigate()
+
       const originalRequest = error.config;
   
       if (error.response?.status === 401 && !originalRequest._retry) {
@@ -61,7 +69,12 @@ const refreshToken = async () => {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return productApi(originalRequest);
         } catch (refreshError) {
-          throw refreshError;
+
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          dispatch(resetAuthStateAction());
+          navigate('/');
+
         }
       }
   

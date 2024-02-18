@@ -6,6 +6,8 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import Item from './Item'
 import { productApi } from '../utility/api'
 import { toast } from 'react-toastify'
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const ItemList: React.FC = () => {
 
@@ -41,7 +43,11 @@ const ItemList: React.FC = () => {
             dataLength={items.length}
             next={fetchMoreData}
             hasMore={true}
-            loader={<h4>Loading...</h4>}
+            loader={
+                <div style={{display:"flex", justifyContent:"center"}}>
+                    <CircularProgress />
+                </div>
+            }
             height={600}
             >
                 <Box sx={{ flexGrow: 1 }}>
